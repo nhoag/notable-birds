@@ -42,13 +42,15 @@ function hash(data) {
 
 function tweet(arr) {
     arr.forEach(function(item, index) {
-        var birdUp = item.howMany + ' ' + item.comName + ' (' + item.sciName + ') sighted at ' + item.locName + ' on ' + item.obsDt;
+        var lat = item.lat;
+        var lng = item.lng;
+        var mapLink = 'https://www.google.com/maps/place/' + lat + '+' + lng + '/@' + lat + ',' + lng + ',13z';
+        var birdUp = item.howMany + ' ' + item.comName + ' (' + item.sciName + ') sighted on ' + item.obsDt + ': ' + mapLink;
         bot.post('statuses/update', { status: birdUp }, function(err, reply) {
             if(err) {
                 console.log(err);
             }
         });
-        // console.log(birdUp);
     });
 }
 
