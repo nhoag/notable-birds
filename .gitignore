@@ -13,5 +13,5 @@ results
 
 npm-debug.log
 node_modules
-auth.js
+twit_auth.js
 sightings.json

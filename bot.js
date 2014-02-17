@@ -2,9 +2,9 @@ var crypto = require('crypto');
 var fs = require('fs');
 var request = require('request');
 var twitter = require('twit');
-var auth = require('./auth');
-var bot = new twitter(auth);
-var file = './sightings.json';
+var twitAuth = require('./twit_auth');
+var bot = new twitter(twitAuth);
+var hashData = './sightings.json';
 
 function getBirds() {
     request({
@@ -19,7 +19,7 @@ function getBirds() {
 }
 
 function valid(sightings) {
-    var prev = fs.readFileSync(file,'utf8');
+    var prev = fs.readFileSync(hashData,'utf8');
     if (typeof sightings != 'undefined') {
         var valid_new = [];
         sightings.forEach(function(item, index) {
@@ -42,11 +42,8 @@ function hash(data) {
 
 function tweet(arr) {
     arr.forEach(function(item, index) {
-        var lat = item.lat;
-        var lng = item.lng;
-        var mapLink = 'https://www.google.com/maps/place/' + lat + '+' + lng + '/@' + lat + ',' + lng + ',13z';
-        var birdUp = item.howMany + ' ' + item.comName + ' (' + item.sciName + ') sighted on ' + item.obsDt + ': ' + mapLink;
-        bot.post('statuses/update', { status: birdUp }, function(err, reply) {
+        var birdUp = item.howMany + ' ' + item.comName + ' (' + item.sciName + ') sighted at ' + item.locName + ' on ' + item.obsDt;
+        bot.post('statuses/update', { status: birdUp, lat: item.lat, long: item.lng, place_id: item.locName }, function(err, reply) {
             if(err) {
                 console.log(err);
             }
@@ -71,7 +68,7 @@ function store(done, current) {
         var curhash = hash(item);
         stash[curhash] = timestamp;
     });
-    fs.writeFile(file, JSON.stringify(stash), function(err) {
+    fs.writeFile(hashData, JSON.stringify(stash), function(err) {
         if(err) {
             console.log(err);
         }
