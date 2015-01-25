@@ -1,0 +1,29 @@
+{
+  "name": "notable-birds",
+  "version": "0.1.0",
+  "description": "Bot for retrieving notable bird sightings from eBird and posting to Twitter.",
+  "main": "nbirds.js",
+  "dependencies": {
+    "redis": "~0.12.1",
+    "twit": "~1.1.12",
+    "winston": "~0.8.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nhoag/notable-birds.git"
+  },
+  "keywords": [
+    "twitter",
+    "ebird"
+  ],
+  "author": "Nathaniel Hoag",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nhoag/notable-birds/issues"
+  },
+  "homepage": "https://github.com/nhoag/notable-birds"
+}
