@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -e
+
+npm install
+export REDIS_URL="${REDIS_PORT}"
+
+node ../nbirds.js
