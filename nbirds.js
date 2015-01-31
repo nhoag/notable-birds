@@ -13,14 +13,11 @@ function dbConnect() {
 function readDb(callback) {
   var db = dbConnect();
 
-  db.client.setnx(db.key, '');
+  var value = JSON.stringify({'limit': '', 'sightings': ''});
+  db.client.setnx(db.key, value);
   db.client.get(db.key, function(err, reply) {
-    if (typeof reply != 'undefined') {
-      callback(reply);
-      db.client.quit();
-    } else {
-      callback('');
-    }
+    callback(reply);
+    db.client.quit();
   });
 }
 
@@ -154,22 +151,40 @@ function logger(msg) {
   winston.error('Fail:' + msg);
 }
 
+function limitResetAll() {
+  var limit = {};
+  limit = limitResetFifteen(limit);
+  limit = limitResetDaily(limit);
+  return limit;
+}
+
+function limitResetFifteen(limit) {
+  limit.fifteenMin = {};
+  limit.fifteenMin.remain = 180;
+  limit.fifteenMin.reset  = Math.round(Date.now() / 1000 + 15 * 60);
+  return limit;
+}
+
+function limitResetDaily(limit) {
+  limit.daily = {};
+  limit.daily.remain = 2400;
+  limit.daily.reset  = Math.round(Date.now() / 1000 + 24 * 60 * 60);
+  return limit;
+}
+
 function limitReset(interval, limit) {
-  if (interval == 'fifteenMin' || interval == 'all') {
-    limit.fifteenMin = {};
-    limit.fifteenMin.remain = 180;
-    limit.fifteenMin.reset  = Math.round(Date.now() / 1000 + 15 * 60);
-  }
-  if (interval == 'daily' || interval == 'all') {
-    limit.daily = {};
-    limit.daily.remain = 2400;
-    limit.daily.reset  = Math.round(Date.now() / 1000 + 24 * 60 * 60);
+  if (interval == 'all') {
+    limit = limitResetAll();
+  } else if (interval == 'fifteenMin') {
+    limit = limitResetFifteen(limit);
+  } else if (interval == 'daily') {
+    limit = limitResetDaily(limit);
   }
   return limit;
 }
 
 function rateLimit(limit) {
-  if (limit == 'undefined' || Object.getOwnPropertyNames(limit).length === 0) {
+  if (limit === '') {
     limit = limitReset('all', limit);
   } else if (Math.round(Date.now() / 1000) >= limit.daily.reset) {
     limit = limitReset('daily', limit);
@@ -219,13 +234,12 @@ function nbController() {
   readDb(function(prev) {
     getSightings(prev, function(data) {
       var uniq = unique(valid(data.sightings));
-      var prev = JSON.parse(data.prev).sightings;
-      var limit = JSON.parse(data.prev).limit;
-      var novel = newBirds(uniq, prev);
-      var rl = rateLimit(limit);
+      var prev = JSON.parse(data.prev);
+      var novel = newBirds(uniq, prev.sightings);
+      var rl = rateLimit(prev.limit);
       var sightings = truncateSightings(novel, rl);
       tweet(sightings);
-      dbStore(prev, sightings, rl);
+      dbStore(prev.sightings, sightings, rl);
     });
   });
 }
