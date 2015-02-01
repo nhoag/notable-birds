@@ -222,7 +222,7 @@ function dbPrune(prev, timeStamp) {
   if (typeof prev != 'undefined') {
     var stash = {};
     for (var index in prev) {
-      if (prev[index] > timeStamp - (60 * 60 * 24 * (process.ENV.NB_BACK + 3))) {
+      if (prev[index] > timeStamp - (60 * 60 * 24 * (process.env.NB_BACK + 3))) {
         stash[index] = prev[index];
       }
     }
