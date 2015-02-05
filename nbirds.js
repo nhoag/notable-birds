@@ -124,7 +124,7 @@ function tweet(sightings) {
 
   sightings.forEach(function(item, index) {
     var update = '';
-    if item.howMany != 'undefined' {
+    if (typeof item.howMany != 'undefined') {
       update = item.howMany + ' ';
     }
     update = update + item.comName;
