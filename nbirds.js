@@ -126,8 +126,8 @@ function tweet(sightings) {
     var update = item.howMany;
     update = update + ' ' + item.comName;
     update = update + ' (' + item.sciName + ')';
-    update = update + ' sighted at ' + item.locName;
-    update = update + ' on ' + item.obsDt;
+    update = update + ' - ' + item.locName;
+    update = update + ' - ' + item.obsDt;
 
     T.post('statuses/update', {
         status: update
