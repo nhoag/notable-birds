@@ -123,8 +123,11 @@ function tweet(sightings) {
   });
 
   sightings.forEach(function(item, index) {
-    var update = item.howMany;
-    update = update + ' ' + item.comName;
+    var update = '';
+    if item.howMany != 'undefined' {
+      update = item.howMany + ' ';
+    }
+    update = update + item.comName;
     update = update + ' (' + item.sciName + ')';
     update = update + ' - ' + item.locName;
     update = update + ' - ' + item.obsDt;
