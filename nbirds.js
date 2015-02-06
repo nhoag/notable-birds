@@ -121,6 +121,37 @@ function newBirds(data, prev) {
   }
 }
 
+function buildTweet(sighting) {
+  var update = '';
+  if (typeof sighting.howMany != 'undefined') {
+    update = sighting.howMany + ' ';
+  }
+  update += sighting.comName;
+  update += ' (' + sighting.sciName + ')';
+  update += ' - ' + sighting.locName.replace(/\(.*?\)\s/g, '');
+  update += ' - ' + sighting.obsDt;
+  update = trimTweet(update);
+  if (update.length + 23 <= 140) {
+    var birdName = sighting.comName.replace(/ /g, '_').replace(/'/g, '');
+    var birdLink = 'http://www.allaboutbirds.org/guide/' + birdName + '/id';
+    update += ' ' + birdLink;
+  }
+  return update;
+}
+
+function trimTweet(update) {
+  if (update.length > 140) {
+    update = update.replace(/-\s/g, '');
+  }
+  if (update.length > 140) {
+    update = update.replace(/\s\d{2}:\d{2}/, '');
+  }
+  if (update.length > 140) {
+    update = update.replace(/\(.*?\)\s/g, '');
+  }
+  return update;
+}
+
 function tweet(sightings) {
   var twitter = require('twit');
   var T = new twitter({
@@ -131,19 +162,7 @@ function tweet(sightings) {
   });
 
   sightings.forEach(function(item, index) {
-    var update = '';
-    if (typeof item.howMany != 'undefined') {
-      update = item.howMany + ' ';
-    }
-    update += item.comName;
-    update += ' (' + item.sciName + ')';
-    update += ' - ' + item.locName;
-    update += ' - ' + item.obsDt;
-    if (update.length + 23 <= 140) {
-      var birdName = item.comName.replace(/ /g,"_").replace(/'/g,'');
-      var birdLink = 'http://www.allaboutbirds.org/guide/' + birdName + '/id';
-      update += ' ' + birdLink;
-    }
+    update = buildTweet(item);
 
     T.post('statuses/update', {
         status: update
