@@ -135,14 +135,14 @@ function tweet(sightings) {
     if (typeof item.howMany != 'undefined') {
       update = item.howMany + ' ';
     }
-    update = update + item.comName;
-    update = update + ' (' + item.sciName + ')';
-    update = update + ' - ' + item.locName;
-    update = update + ' - ' + item.obsDt;
+    update += item.comName;
+    update += ' (' + item.sciName + ')';
+    update += ' - ' + item.locName;
+    update += ' - ' + item.obsDt;
     if (update.length + 23 <= 140) {
       var birdName = item.comName.replace(/ /g,"_").replace(/'/g,'');
       var birdLink = 'http://www.allaboutbirds.org/guide/' + birdName + '/id';
-      update = update + ' ' + birdLink;
+      update += ' ' + birdLink;
     }
 
     T.post('statuses/update', {
