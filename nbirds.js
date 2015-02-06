@@ -131,6 +131,11 @@ function tweet(sightings) {
     update = update + ' (' + item.sciName + ')';
     update = update + ' - ' + item.locName;
     update = update + ' - ' + item.obsDt;
+    if (update.length + 23 <= 140) {
+      var birdName = item.comName.replace(/ /g,"_").replace(/'/g,'');
+      var birdLink = 'http://www.allaboutbirds.org/guide/' + birdName + '/id';
+      update = update + ' ' + birdLink;
+    }
 
     T.post('statuses/update', {
         status: update
