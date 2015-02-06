@@ -1,3 +1,11 @@
+var winston = require('winston');
+var logger = new (winston.Logger)({
+  transports: [
+    new (winston.transports.File)({ filename: '/var/log/nbirds/error.log' })
+  ],
+  exitOnError: false
+});
+
 function dbConnect() {
   var url      = require('url');
   var redisUrl = url.parse(process.env.REDIS_URL);
@@ -57,7 +65,7 @@ function getSightings(prev, callback) {
     });
   });
   req.on('error', function(e) {
-    logger('problem with request: ' + e.message);
+    logger.warn('problem with request: ' + e.message);
   });
   req.end();
 }
@@ -144,19 +152,10 @@ function tweet(sightings) {
       , place_id: item.locName
     }, function(err, data, response) {
       if(err) {
-        logger(err);
+        logger.warn(err);
       }
     });
   });
-}
-
-function logger(msg) {
-  var winston = require('winston');
-  winston.add(winston.transports.File, {
-    filename: '/var/log/nbirds/error.log'
-  });
-  winston.remove(winston.transports.Console);
-  winston.error('Fail:' + msg);
 }
 
 function limitResetAll() {
