@@ -132,7 +132,7 @@ function buildTweet(sighting) {
   update += ' - ' + sighting.obsDt;
   update = trimTweet(update);
   if (update.length + 23 <= 140) {
-    var birdName = sighting.comName.replace(/ /g, '_').replace(/'/g, '');
+    var birdName = sighting.comName.replace(/ \(.*?\)/, '').replace(/ /g, '_').replace(/'/g, '');
     var birdLink = 'http://www.allaboutbirds.org/guide/' + birdName + '/id';
     update += ' ' + birdLink;
   }
