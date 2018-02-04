@@ -37,7 +37,7 @@ function writeDb(value) {
 }
 
 function getSightings(prev, callback) {
-  var http     = require('http');
+  var https     = require('https');
   var endpoint = '/ws1.1/data/notable/region/recent?';
   var rgnType  = 'rtype=subnational1';
   var rgn      = '&r=' + process.env.NB_REGION;
@@ -47,11 +47,11 @@ function getSightings(prev, callback) {
   var path     = endpoint + query;
   var options = {
     host: 'ebird.org',
-    port: 80,
+    port: 443,
     path: path,
     method: 'GET'
   };
-  var req = http.request(options, function(res) {
+  var req = https.request(options, function(res) {
     res.setEncoding('utf-8');
     var str = '';
     res.on('data', function (chunk) {
@@ -133,7 +133,7 @@ function buildTweet(sighting) {
   update = trimTweet(update);
   if (update.length + 23 <= 140) {
     var birdName = sighting.comName.replace(/ \(.*?\)/, '').replace(/ /g, '_').replace(/'/g, '');
-    var birdLink = 'http://www.allaboutbirds.org/guide/' + birdName + '/id';
+    var birdLink = 'https://www.allaboutbirds.org/guide/' + birdName + '/id';
     update += ' ' + birdLink;
   }
   return update;
